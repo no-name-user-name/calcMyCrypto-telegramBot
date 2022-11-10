@@ -40,8 +40,6 @@ def price_parser():
         except Exception as e:
             print(f'Error: {e}')
             logger.error(e)
-        finally:
-            time.sleep(60)
 
 
 def parse_addresses_balance():
@@ -71,9 +69,6 @@ def parse_addresses_balance():
             print(f'Error: {e}')
             logger.error(e)
 
-        finally:
-            time.sleep(60)
-
 
 def parse_addresses_stake():
     while 1:
@@ -100,9 +95,6 @@ def parse_addresses_stake():
         except Exception as e:
             print(f'Error: {e}')
             logger.error(e)
-
-        finally:
-            time.sleep(60)
 
 
 def parse_addresses_unstake():
@@ -131,9 +123,6 @@ def parse_addresses_unstake():
             print(f'Error: {e}')
             logger.error(e)
 
-        finally:
-            time.sleep(60)
-
 
 def parse_addresses_rewards():
     while 1:
@@ -161,5 +150,11 @@ def parse_addresses_rewards():
             print(f'Error: {e}')
             logger.error(e)
 
-        finally:
-            time.sleep(60)
+
+def loop_parsers():
+    price_parser()
+    parse_addresses_balance()
+    parse_addresses_stake()
+    parse_addresses_rewards()
+
+    time.sleep(60)

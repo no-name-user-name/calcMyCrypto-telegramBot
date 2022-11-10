@@ -47,6 +47,7 @@ def briefcase(call):
     t_balance = 0
     t_stake = 0
     t_rewards = 0
+    t_stable = 0
 
     sort_data = []
     for ut in user_tokens:
@@ -55,6 +56,9 @@ def briefcase(call):
         t_balance += token_data.price * ut['available_balance']
         t_stake += token_data.price * ut['staked_balance']
         t_rewards += token_data.price * ut['rewards_balance']
+
+        if token_data.name in ['busd_bep2']:
+            t_stable += token_data.price * ut['available_balance']
 
         sort_data.append({
             'balance': token_data.price * (ut['available_balance'] + ut['staked_balance'] + ut['rewards_balance']),
@@ -78,12 +82,24 @@ def briefcase(call):
 
     markup = InlineKeyboardMarkup(k)
 
+    full_balance = t_balance+t_stake+t_rewards
+
+    t_balance_percents = round((float(t_balance * 100 / full_balance)), 2)
+    t_stake_percents = round(float(t_stake * 100 / full_balance), 2)
+    t_rewards_percents = round(float(t_rewards * 100 / full_balance), 2)
+    t_stable_percents = round(float(t_stable * 100 / full_balance), 2)
+
+    t_crypto = full_balance - t_stable - t_stake - t_rewards
+    t_crypto_percents = round(float(t_crypto * 100 / full_balance), 2)
+
     if tc > 0:
-        msg = lt.simple_msg('Your tokens',
-                            f'Total balance: ${format(t_balance+t_stake+t_rewards, f".2f")}\n\n'
-                            f'  - Available: ${format(t_balance, f".2f")}\n'
-                            f'  - In stake: ${format(t_stake, f".2f")}\n'
-                            f'  - Rewards: ${format(t_rewards, f".2f")}\n')
+        msg = lt.simple_msg('💎 Your tokens',
+                            f'🔸 Total balance: ${format(full_balance, f".2f")}\n\n'
+                            f'▫️ Available: ${format(t_balance, f".2f")} ({t_balance_percents}%)\n'
+                            f' ┕ Crypto: ${format(t_crypto, f".2f")} ({t_crypto_percents}%)\n'
+                            f' ┕ Stable: ${format(t_stable, f".2f")} ({t_stable_percents}%)\n'
+                            f'▫️ In stake: ${format(t_stake, f".2f")} ({t_stake_percents}%)\n'
+                            f'▫️ Rewards: ${format(t_rewards, f".2f")} ({t_rewards_percents}%)\n')
 
     else:
         msg = lt.simple_msg('Your tokens', 'Tokens not yet added')
